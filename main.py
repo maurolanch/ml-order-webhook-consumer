@@ -1,5 +1,6 @@
 import base64
 import json
+import os
 from datetime import datetime, timezone
 from flask import Flask, request
 from google.cloud import storage
@@ -36,3 +37,7 @@ def consume_pubsub():
     blob.upload_from_string(json.dumps(order_json), content_type="application/json")
 
     return "OK", 200
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
