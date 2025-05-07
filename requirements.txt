@@ -1,2 +1,3 @@
-flask
-google-cloud-storage
+Flask==2.0.2
+google-cloud-storage==1.42.3
+google-cloud-pubsub==2.7.0
