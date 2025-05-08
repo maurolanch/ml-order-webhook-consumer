@@ -1,0 +1,4 @@
+*.json
+
+webhook_orders_raw_local/
+webhooks_2025_05_08/
