@@ -7,6 +7,7 @@ from datetime import datetime
 from flask import Flask, request
 from google.cloud import storage
 import uuid
+from google.api_core.exceptions import BadRequest, NotFound, Forbidden
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -54,8 +55,17 @@ def consume_pubsub():
         blob = bucket.blob(path)
         blob.upload_from_string(json.dumps(order_json), content_type="application/json")
         logger.info(f"Archivo subido exitosamente a {path}")
+    except BadRequest as e:
+        logger.error(f"Solicitud inválida al subir a Cloud Storage: {str(e)}")
+        return "Bad Request: invalid upload parameters", 400
+    except NotFound as e:
+        logger.error(f"Recurso no encontrado: {str(e)}")
+        return "Not Found: bucket or resource missing", 404
+    except Forbidden as e:
+        logger.error(f"Acceso denegado al subir archivo: {str(e)}")
+        return "Forbidden: access denied", 403
     except Exception as e:
-        logger.error(f"Error al subir el archivo a Cloud Storage: {str(e)}")
+        logger.error(f"Error general al subir archivo a Cloud Storage: {str(e)}")
         return "Internal Server Error: unable to upload file", 500
 
     return "OK", 200
